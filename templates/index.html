@@ -40,12 +40,13 @@
 					document.querySelector('#fader').value = message.data;
 					document.querySelector('#fadervalue').value = message.data;
 				};
+			})
 
+			function getcolorStream(fix) {
 				sseColor = new EventSource('/colorStream');
 				sseColor.onmessage = function(message) {
 					$('#custom').spectrum("set", message.data);
 				};
-			})
 
 		</script>
 
