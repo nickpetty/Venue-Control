@@ -27,7 +27,7 @@ pds.append(fix4)
 fix5 = FixtureRGB(12)
 pds.append(fix5)
 
-fixtures ={'fix1':'0', 'fix2':'0', 'fix3':'0', 'fix4':'0', 'fix5':'0'}
+fixtures ={'0':'0', '3':'0', '6':'0', '9':'0', '12':'0'}
 
 print "Fixtures ready!"
 
@@ -54,35 +54,38 @@ def event_stream():
 
 
 
-def streamColor():
-    global currentColor
-    print currentColor
+def streamColor(fix):
+    global fixtures
     lastColor = ''
     while True:
-        if lastColor != currentColor:
-            print currentColor
-            yield 'data: %s\n\n' % currentColor
-            lastColor = currentColor
+        if lastColor != fixtures[fix]:
+            yield 'data: %s\n\n' % fixtures[fix]
+            lastColor = fixtures[fix]
         gevent.sleep(0.1)
 
 
-@app.route('/setColor/<color>')
-def setColor(color):
+@app.route('/setColor/<fix>/<color>')
+def setColor(fix, color):
     global currentColor
-    currentColor = color
-    color = re.findall('..', color)
-    r = int(color[0], 16)
-    g = int(color[1], 16)
-    b = int(color[2], 16)
     global pds
-    pds[0].rgb = (r,g,b)
+    global fixtures
+    fixtures[fix] = color
+
+    rgb = re.findall('..', color)
+
+    r = int(rgb[0], 16)
+    g = int(rgb[1], 16)
+    b = int(rgb[2], 16)
+
+    pds[int(fix)].rgb = (r,g,b)
+
     pds.go()
 
     return '',204
 
-@app.route('/colorStream')
-def colorstream():
-    return Response(streamColor(), mimetype='text/event-stream')
+@app.route('/colorStream/<fix>')
+def colorstream(fix):
+    return Response(streamColor(fix), mimetype='text/event-stream')
 
 
 @app.route('/<num>')
