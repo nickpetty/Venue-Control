@@ -13,9 +13,23 @@ app = Flask(__name__)
 #global currentNum
 currentNum = 0
 currentColor = '#FFFFFF'
+
+print "Adding fixtures..."
 pds = PowerSupply('10.0.0.154')
-fix = FixtureRGB(0)
-pds.append(fix)
+fix1 = FixtureRGB(0)
+pds.append(fix1)
+fix2 = FixtureRGB(3)
+pds.append(fix2)
+fix3 = FixtureRGB(6)
+pds.append(fix3)
+fix4 = FixtureRGB(9)
+pds.append(fix4)
+fix5 = FixtureRGB(12)
+pds.append(fix5)
+
+fixtures ={'fix1':'0', 'fix2':'0', 'fix3':'0', 'fix4':'0', 'fix5':'0'}
+
+print "Fixtures ready!"
 
 @app.route('/')
 def index():
