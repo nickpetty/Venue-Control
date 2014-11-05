@@ -1,0 +1,86 @@
+<html>
+
+	<head>
+		<script type="text/javascript">
+
+			function change(value) {
+				var xmlhttp;
+				xmlhttp = new XMLHttpRequest();
+				xmlhttp.open("GET", '/' + value, true);
+				xmlhttp.send();
+			}
+
+			function changeColor(value) {
+				var xmlhttp;
+				xmlhttp = new XMLHttpRequest();
+				xmlhttp.open("GET", '/setColor/' + value, true);
+				xmlhttp.send();
+			}
+
+			function reqListener () {
+
+				document.querySelector('#fader').value = this.responseText;
+				document.querySelector('#fadervalue').value = this.responseText;
+			}
+
+			//xmlhttp = new XMLHttpRequest();
+			//xmlhttp.onload = reqListener;
+			//xmlhttp.open('GET', '/current', true);
+			//xmlhttp.send();	
+			
+		</script>
+
+		<script type="text/javascript" src='http://code.jquery.com/jquery-1.8.0.min.js'></script>
+
+		<script type="text/javascript">
+
+			$(document).ready(function() {
+				sse = new EventSource('/stream');
+				sse.onmessage = function(message) {
+					document.querySelector('#fader').value = message.data;
+					document.querySelector('#fadervalue').value = message.data;
+				};
+
+				sseColor = new EventSource('/colorStream');
+				sseColor.onmessage = function(message) {
+					$('#custom').spectrum("set", message.data);
+				};
+			})
+
+		</script>
+
+	</head>
+
+	<body>
+		<label for=fader>Fader</label>
+		<input type=range style='-webkit-appearance: slider-vertical' id='fader' min=0 value= max=100 step=1 oninput="change(this.value); outputUpdate(value);">
+		<output for=fader id='fadervalue'>0</output>
+		<br>
+
+		<ul id='output'/>
+		<br>
+		<input type=range style='-webkit-appearance: slider-vertical' id='fader1' min=0 value=0 max=100 step=1 oninput="change(this.value);">
+		<script>
+
+			function outputUpdate(value) {
+				document.querySelector('#fadervalue').value = value;
+			}
+
+		</script>
+		<script src='/static/spectrum.js'></script>
+		<link rel='stylesheet' href='/static/spectrum.css' />
+		<input type='text' id="custom">
+
+		<script>
+		$("#custom").spectrum({
+			flat: true,
+			showButtons: false,
+			clickoutFiresChange: true,
+			move: function(color) { document.querySelector('#colorvalue').value = color.toHex(); changeColor(color.toHex()); }
+		});
+		</script>
+
+		<output id='colorvalue'></output>
+	</body>
+
+</html>
