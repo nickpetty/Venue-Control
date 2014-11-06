@@ -16,18 +16,18 @@ currentColor = '#FFFFFF'
 
 print "Adding fixtures..."
 pds = PowerSupply('10.0.0.154')
-fix1 = FixtureRGB(0)
+fix0 = FixtureRGB(0)
+pds.append(fix0)
+fix1 = FixtureRGB(3)
 pds.append(fix1)
-fix2 = FixtureRGB(3)
+fix2 = FixtureRGB(6)
 pds.append(fix2)
-fix3 = FixtureRGB(6)
+fix3 = FixtureRGB(9)
 pds.append(fix3)
-fix4 = FixtureRGB(9)
+fix4 = FixtureRGB(12)
 pds.append(fix4)
-fix5 = FixtureRGB(12)
-pds.append(fix5)
 
-fixtures ={'0':'0', '3':'0', '6':'0', '9':'0', '12':'0'}
+fixtures =[0,0,0,0,0]
 
 print "Fixtures ready!"
 
@@ -58,10 +58,43 @@ def streamColor(fix):
     global fixtures
     lastColor = ''
     while True:
-        if lastColor != fixtures[fix]:
-            yield 'data: %s\n\n' % fixtures[fix]
-            lastColor = fixtures[fix]
+        if lastColor != fixtures[int(fix)]:
+            yield 'data: %s\n\n' % fixtures[int(fix)]
+            lastColor = fixtures[int(fix)]
         gevent.sleep(0.1)
+
+# def streamColor():
+#     global fixtures
+#     lastColor = ''
+#     while True:
+#         if lastColor != fixtures[0]:
+#             yield 'event: fix0\n data: %s\n\n' % fixtures[0]
+#             lastColor = fixtures[0]
+#         gevent.sleep(0.1)
+
+#     while True:
+#         if lastColor != fixtures[1]:
+#             yield 'event: fix1\n data: %s\n\n' % fixtures[1]
+#             lastColor = fixtures[1]
+#         gevent.sleep(0.1)
+
+#     while True:
+#         if lastColor != fixtures[2]:
+#             yield 'event: fix2\n data: %s\n\n' % fixtures[2]
+#             lastColor = fixtures[2]
+#         gevent.sleep(0.1)
+
+#     while True:
+#         if lastColor != fixtures[3]:
+#             yield 'event: fix3\n data: %s\n\n' % fixtures[3]
+#             lastColor = fixtures[3]
+#         gevent.sleep(0.1)
+
+#     while True:
+#         if lastColor != fixtures[4]:
+#             yield 'event: fix4\n data: %s\n\n' % fixtures[4]
+#             lastColor = fixtures[4]
+#         gevent.sleep(0.1)
 
 
 @app.route('/setColor/<fix>/<color>')
@@ -69,7 +102,8 @@ def setColor(fix, color):
     global currentColor
     global pds
     global fixtures
-    fixtures[fix] = color
+
+    fixtures[int(fix)] = color
 
     rgb = re.findall('..', color)
 
@@ -80,7 +114,6 @@ def setColor(fix, color):
     pds[int(fix)].rgb = (r,g,b)
 
     pds.go()
-
     return '',204
 
 @app.route('/colorStream/<fix>')
