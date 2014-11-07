@@ -17,6 +17,7 @@ currentColor = '#FFFFFF'
 print "Adding fixtures..."
 pds = PowerSupply('192.168.1.100')
 fix0 = FixtureRGB(0)
+
 pds.append(fix0)
 fix1 = FixtureRGB(3)
 pds.append(fix1)
