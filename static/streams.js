@@ -41,5 +41,10 @@
 			$('#fix4').spectrum("set", message.data);
 		};
 //	};
+
+		sseColor15 = new EventSource('/colorStream/5');
+		sseColor15.onmessage = function(message) {
+			$('#fix5').spectrum("set", message.data);
+		};
 //}
 

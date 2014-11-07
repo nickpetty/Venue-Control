@@ -40,3 +40,10 @@ $("#fix4").spectrum({
 	clickoutFiresChange: true,
 	move: function(color) { changeColor(4,color.toHex()); }
 });
+
+$("#fix5").spectrum({
+	flat: true,
+	showButtons: false,
+	clickoutFiresChange: true,
+	move: function(color) { changeColor(5,color.toHex()); }
+});
