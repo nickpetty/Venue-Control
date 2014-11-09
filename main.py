@@ -3,111 +3,51 @@ import gevent
 import gevent.monkey
 from gevent.pywsgi import WSGIServer
 from gevent import sleep
-gevent.monkey.patch_all()
 import time
 from kinet import *
 import re
+import json
+gevent.monkey.patch_all()
 
 app = Flask(__name__)
 
-#global currentNum
-currentNum = 0
-currentColor = '#FFFFFF'
+events = {}
+events['fix0'] = str(000000)
+events['fix1'] = str(000000)
+events['fix2'] = str(000000)
+events['fix3'] = str(000000)
+events['fix4'] = str(000000)
+events['fix5'] = str(000000)
 
-print "Adding fixtures..."
-pds = PowerSupply('192.168.1.100')
-fix0 = FixtureRGB(0)
+pds = PowerSupply('10.0.0.154')
 
-pds.append(fix0)
-fix1 = FixtureRGB(3)
-pds.append(fix1)
-fix2 = FixtureRGB(6)
-pds.append(fix2)
-fix3 = FixtureRGB(9)
-pds.append(fix3)
-fix4 = FixtureRGB(12)
-pds.append(fix4)
-fix5 = FixtureRGB(15)
-pds.append(fix5)
+x=0
+while x <= 15:
+    #print 'appending ' + str(x)
+    pds.append(FixtureRGB(x))
+    x+=3
 
-fixtures =[0,0,0,0,0,0]
-
-print "Fixtures ready!"
+#################
+#Flask Functions#
+#################
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/favicon.ico')
-def nofavicon():
+def fuckFavicon():
     return '', 204
 
-
-
-
-def event_stream():
-    global currentNum
-    print currentNum
-    setNum = 0
-    while True:
-        if setNum != currentNum:
-            yield 'data: %s\n\n' % currentNum
-            setNum = currentNum
-        gevent.sleep(0.1)
-
-
-
-def streamColor(fix):
-    global fixtures
-    lastColor = ''
-    while True:
-        if lastColor != fixtures[int(fix)]:
-            yield 'data: %s\n\n' % fixtures[int(fix)]
-            lastColor = fixtures[int(fix)]
-        gevent.sleep(0.1)
-
-# def streamColor():
-#     global fixtures
-#     lastColor = ''
-#     while True:
-#         if lastColor != fixtures[0]:
-#             yield 'event: fix0\n data: %s\n\n' % fixtures[0]
-#             lastColor = fixtures[0]
-#         gevent.sleep(0.1)
-
-#     while True:
-#         if lastColor != fixtures[1]:
-#             yield 'event: fix1\n data: %s\n\n' % fixtures[1]
-#             lastColor = fixtures[1]
-#         gevent.sleep(0.1)
-
-#     while True:
-#         if lastColor != fixtures[2]:
-#             yield 'event: fix2\n data: %s\n\n' % fixtures[2]
-#             lastColor = fixtures[2]
-#         gevent.sleep(0.1)
-
-#     while True:
-#         if lastColor != fixtures[3]:
-#             yield 'event: fix3\n data: %s\n\n' % fixtures[3]
-#             lastColor = fixtures[3]
-#         gevent.sleep(0.1)
-
-#     while True:
-#         if lastColor != fixtures[4]:
-#             yield 'event: fix4\n data: %s\n\n' % fixtures[4]
-#             lastColor = fixtures[4]
-#         gevent.sleep(0.1)
-
+@app.route('/sseColor')
+def getStream():
+    return Response(sseColorStream(), mimetype='text/event-stream')
 
 @app.route('/setColor/<fix>/<color>')
 def setColor(fix, color):
-    global currentColor
     global pds
-    global fixtures
-
-    fixtures[int(fix)] = color
-
+    global events
+    events['fix' + str(fix)] = str(color)
     rgb = re.findall('..', color)
 
     r = int(rgb[0], 16)
@@ -115,34 +55,40 @@ def setColor(fix, color):
     b = int(rgb[2], 16)
 
     pds[int(fix)].rgb = (r,g,b)
-
     pds.go()
-    return '',204
 
-@app.route('/colorStream/<fix>')
-def colorstream(fix):
-    return Response(streamColor(fix), mimetype='text/event-stream')
+    #print 'setting %s to %s' % (fix, color)
+    return '', 204
 
 
-@app.route('/<num>')
-def test(num):
-    print num
-    global currentNum
-    currentNum = num
-    return '',204
+#########################
+#Functions outside Flask#
+#########################
 
-@app.route('/current')
-def current():
-    print currentNum
-    return str(currentNum), 202
+## Streams ##
 
-@app.route('/stream')
-def sse_request():
-    return Response(
-        event_stream(),
-        mimetype='text/event-stream')
+def sseColorStream():
+
+    global events
+    lastSentData = ''
+
+    while True:
+
+        if str(lastSentData) != str(events):
+            yield 'data: %s\n\n' % json.dumps(events)
+            lastSentData = str(events)
+        gevent.sleep(0.1)
+
+## Control Functions ##
+
+
 
 if __name__ == '__main__':
     #app.run(host='0.0.0.0', port=80)
     http_server = WSGIServer(('0.0.0.0', 80), app)
     http_server.serve_forever()
+
+
+
+
+

@@ -1,55 +1,62 @@
 <html>
-
 	<head>
-		<script type="text/javascript" src='/static/jquery-1.8.0.min.js'></script>	
-		<script src='/static/spectrum.js'></script>
-		<link rel='stylesheet' href='/static/spectrum.css' />			
-		<script type="text/javascript" src='/static/streams.js'></script>
+
+		<script type='text/javascript' src='/static/jquery-1.8.0.min.js'></script>	
+		<script type='text/javascript' src='/static/spectrum.js'></script>
+		<script type='text/javascript' src='/static/sse.js'></script>
+
+		<link rel='stylesheet' href='/static/spectrum.css' />
 
 		<script type="text/javascript">
-
-			function change(value) {
-				var xmlhttp;
-				xmlhttp = new XMLHttpRequest();
-				xmlhttp.open("GET", '/' + value, true);
-				xmlhttp.send();
-			}
-
-			// function reqListener () {
-			// 	document.querySelector('#fader').value = this.responseText;
-			// 	document.querySelector('#fadervalue').value = this.responseText;
-			// }
-
-			//xmlhttp = new XMLHttpRequest();
-			//xmlhttp.onload = reqListener;
-			//xmlhttp.open('GET', '/current', true);
-			//xmlhttp.send();	
-
+			window.onbeforeunload = function (){
+					sseFix0.close();
+					sseFix1.close();
+					sseFix2.close();
+					sseFix3.close();
+					sseFix4.close();
+					sseFix5.close();
+				};
 		</script>
 
 	</head>
 
 	<body>
-	
-		<label for=fader>Fader</label>
-		<input type=range style='-webkit-appearance: slider-vertical' id='fader' min=0 value= max=100 step=1 oninput="change(this.value); outputUpdate(value);">
-		<output for=fader id='fadervalue'>0</output>
 
-		<script>
-			function outputUpdate(value) {
-				document.querySelector('#fadervalue').value = value;
-			}
-		</script>
+		<input type='text' id='fix0'>
+		<button onclick=copyColor('0');>Copy</button>
+		<button onclick=pasteColor('0');>Paste</button>
+		<br>
 
-		<p>
-		<input type='text' id="fix0">
-		<input type='text' id="fix1">
-		<input type='text' id="fix2">
-		<input type='text' id="fix3">
-		<input type='text' id="fix4">
-		<input type='text' id="fix5">
-		<script type="text/javascript" src='/static/colors.js'></script>
+		<input type='text' id='fix1'>
+		<button onclick=copyColor('1');>Copy</button>
+		<button onclick=pasteColor('1');>Paste</button>
+		<br>
+
+		<input type='text' id='fix2'>
+		<button onclick=copyColor('2');>Copy</button>
+		<button onclick=pasteColor('2');>Paste</button>
+		<br>
+
+		<input type='text' id='fix3'>
+		<button onclick=copyColor('3');>Copy</button>
+		<button onclick=pasteColor('3');>Paste</button>
+		<br>	
+
+		<input type='text' id='fix4'>
+		<button onclick=copyColor('4');>Copy</button>
+		<button onclick=pasteColor('4');>Paste</button>
+		<br>
+
+		<input type='text' id='fix5'>
+		<button onclick=copyColor('5');>Copy</button>
+		<button onclick=pasteColor('5');>Paste</button>
+		<br>	
+
+		<h5>Master Control:</h5><p>
+		<button onclick=allOff();>Off</button>
+		<button onclick=allOn();>On</button>
+
+		<script type='text/javascript' src='/static/lights.js'></script>
 
 	</body>
-
 </html>
