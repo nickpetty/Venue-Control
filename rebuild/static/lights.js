@@ -44,4 +44,4 @@ $('#fix5').spectrum({
 	showButtons: false,
 	clickoutFiresChange: true,
 	move: function(color) { changeColor(5, color.toHex()); }
-});
+})
