@@ -104,12 +104,23 @@ def subscribePercentage(controlName, node, vd, obj, sv):
 gevent.spawn(subscribePercentage('Founders', '037E', '03', '000100', '0000'))
 #gevent.spawn(subscribePercent('Backstage', '037E', '03', '000102', '0000'))
 
+# def sseBluStream():
+#     global audioControls
+#     lastSentData = ''
+
+#     while True:
+
+#         if str(lastSentData) != str(audioControls):
+#             yield 'data: %s\n\n' % json.dumps(audioControls)
+#             lastSentData = str(audioControls)
+#         gevent.sleep(0.1)
+
 def sseBluStream():
     global audioControls
     lastSentData = ''
 
     while True:
-
+        audioControls['Founders'] = blu.subscribePercent('037E', '03', '000100', '0000')).next()
         if str(lastSentData) != str(audioControls):
             yield 'data: %s\n\n' % json.dumps(audioControls)
             lastSentData = str(audioControls)
