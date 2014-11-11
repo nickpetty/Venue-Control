@@ -38,7 +38,18 @@ class Blu:
 			# Receive message - Encode as hex - Remove 1st 22 char - Send to specialChar function -
 			# Capture 1st 8 returned chars - Decode as hex - Unpack signed 32-bit big-endian int into 'long int' -
 			# Divide by 65536 - round to two decimal points
-			yield round(float(struct.unpack('>l', self.specialChar(self.s.recv(2048).encode('hex')[24:], 1)[:8].decode('hex'))[0])/65536, 2)
+			lastSent = ''
+			value = self.specialChar(self.s.recv(2048).encode('hex'), 1)
+			sent = str(round(float(struct.unpack('>l', value[20:][:8].decode('hex'))[0])/65536,0))[:2]
+			# print value
+			# print len(value)
+			if lastSent != sent:
+				yield sent
+				lastSent = sent
+
+			##NOTE: [20:] - 32 chars
+
+			#yield round(float(struct.unpack('>l', self.specialChar(self.s.recv(2048).encode('hex')[24:], 1)[:8].decode('hex'))[0])/65536, 2)
 			gevent.sleep(0.1)
 			#yield self.s.recv(2048).encode('hex')
 		self.s.close()
@@ -162,8 +173,8 @@ class Blu:
 #	print x
 #blu.setState('037E', '03', '000101', '0000', '5')
 #blu.setState('1e19', '03', '000103', '0002', '1')
-# for x in blu.subscribePercent('037E','03','000100','0000'):
-#     print x
+#for x in blu.subscribePercent('037E','03','000102','0000'):
+#   print x
 
 # for x in blu.sub():
 # 	print x

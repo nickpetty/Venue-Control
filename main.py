@@ -29,8 +29,12 @@ while x <= 15:
     x+=3
 
 
-blu = Blu("10.0.0.141")
-audioControls = {}
+
+fader = Blu('10.0.0.141')
+
+controls={}
+controls['founders'] = '000102'
+controls['backstage'] = '000100'
 
 #################
 #Flask Functions#
@@ -66,6 +70,7 @@ def setColor(fix, color):
 
     #print 'setting %s to %s' % (fix, color)
     return '', 204
+
 #########################
 
 ## BSS Blu ##
@@ -73,6 +78,18 @@ def setColor(fix, color):
 @app.route('/sseBlu')
 def getBluStream():
     return Response(sseBluStream(), mimetype='text/event-stream')
+
+@app.route('/setFader/<control>/<value>')
+def setAudio(control, value):
+    global controls
+    fader.setPercent('037E','03',controls[control],'0000', value)
+    return '',204
+
+@app.route('/setMute/<control>/<state>')
+def setMute(control, state):
+    global controls
+    fader.setState('037E', '03', controls[control], '0001', state)
+    return '', 204
 
 #########################
 #Functions outside Flask#
@@ -90,37 +107,13 @@ def sseColorStream():
             lastSentData = str(fixtures)
         gevent.sleep(0.1)
 
-def subscribePercentage(controlName, node, vd, obj, sv):
-    global audioControls
-
-    for x in blu.subscribePercent(node, vd, obj, sv):
-        audioControls[controlName] = x
-        gevent.sleep(0.1)
-    # Founders audio level:
-    # for x in blu.subscribePercent('037E','03','000100','0000'):
-    #     audioControls['Founders'] = x
-    #     gevent.sleep(0.1)
-
-gevent.spawn(subscribePercentage('Founders', '037E', '03', '000100', '0000'))
-#gevent.spawn(subscribePercent('Backstage', '037E', '03', '000102', '0000'))
-
-# def sseBluStream():
-#     global audioControls
-#     lastSentData = ''
-
-#     while True:
-
-#         if str(lastSentData) != str(audioControls):
-#             yield 'data: %s\n\n' % json.dumps(audioControls)
-#             lastSentData = str(audioControls)
-#         gevent.sleep(0.1)
 
 def sseBluStream():
-    global audioControls
     lastSentData = ''
 
     while True:
-        audioControls['Founders'] = blu.subscribePercent('037E', '03', '000100', '0000')).next()
+        audioControls['founders'] = Blu('10.0.0.141').subscribePercent('037E', '03', '000102', '0000').next()
+        audioControls['backstage'] = Blu('10.0.0.141').subscribePercent('037E', '03', '000100', '0000').next()
         if str(lastSentData) != str(audioControls):
             yield 'data: %s\n\n' % json.dumps(audioControls)
             lastSentData = str(audioControls)

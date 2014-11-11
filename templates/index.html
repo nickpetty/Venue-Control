@@ -4,17 +4,13 @@
 		<script type='text/javascript' src='/static/jquery-1.8.0.min.js'></script>	
 		<script type='text/javascript' src='/static/spectrum.js'></script>
 		<script type='text/javascript' src='/static/sse.js'></script>
+		<script type="text/javascript" src='/static/audiocontrols.js'></script>
 
 		<link rel='stylesheet' href='/static/spectrum.css' />
 
 		<script type="text/javascript">
 			window.onbeforeunload = function (){
-					sseFix0.close();
-					sseFix1.close();
-					sseFix2.close();
-					sseFix3.close();
-					sseFix4.close();
-					sseFix5.close();
+					sse.close();
 				};
 		</script>
 
@@ -57,6 +53,11 @@
 		<button onclick=allOn();>On</button>
 
 		<script type='text/javascript' src='/static/lights.js'></script>
+
+		<h3>Faders</h3><p>
+
+		<label>Backstage</label>
+		<input type=range style='-webkit-appearance: slider-vertical' id='backstageFader' min=0 max=100 value=0 step=1 oninput="changeFader('backstage', this.value);">
 
 	</body>
 </html>

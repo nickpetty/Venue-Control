@@ -8,3 +8,9 @@ sse.onmessage = function(message) {
 	$('#fix4').spectrum("set", data.fix4);
 	$('#fix5').spectrum("set", data.fix5);
 };
+
+sseAudio = new EventSource('/sseBlu');
+sseAudio.onmessage = function(message) {
+	data = JSON.parse(message.data);
+	document.querySelector('#backstageFader').value = data.backstage;
+};
