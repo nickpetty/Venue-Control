@@ -8,6 +8,8 @@ from kinet import *
 import re
 import json
 from bss import Blu
+from dmx import EDYC2DMX
+
 gevent.monkey.patch_all()
 
 app = Flask(__name__)
@@ -32,9 +34,11 @@ while x <= 15:
 
 fader = Blu('10.0.0.141')
 
-controls={}
-controls['founders'] = '000102'
-controls['backstage'] = '000100'
+audioControls={}
+audioControls['founders'] = '000102'
+audioControls['backstage'] = '000100'
+
+dmx = EDYC2DMX(23) # Initialize edyc-dmx module
 
 #################
 #Flask Functions#
@@ -47,6 +51,17 @@ def index():
 @app.route('/favicon.ico')
 def fuckFavicon():
     return '', 204
+
+#########################
+
+## DMX Control ##
+
+@app.route('/setDMX/<channel>/<value>')
+def setDMX(channel, value):
+    dmx.send(int(channel), int(value))
+    return '', 204
+
+#########################
 
 ## ColorBlast ##
 

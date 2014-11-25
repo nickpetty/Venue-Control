@@ -59,5 +59,17 @@
 		<label>Backstage</label>
 		<input type=range style='-webkit-appearance: slider-vertical' id='backstageFader' min=0 max=100 value=0 step=1 oninput="changeFader('backstage', this.value);">
 
+		<label>Shutter<label>
+		<input type=range style='-webkit-appearance: slider-vertical' id='houseLights' min=0 max=255 value=0 step=1 oninput="setDMX(7, this.value);">
+
+		<label>Red<label>
+		<input type=range style='-webkit-appearance: slider-vertical' id='houseLights' min=0 max=255 value=0 step=1 oninput="setDMX(1, this.value);">
+
+		<label>Green<label>
+		<input type=range style='-webkit-appearance: slider-vertical' id='houseLights' min=0 max=255 value=0 step=1 oninput="setDMX(2, this.value);">
+
+		<label>Blue<label>
+		<input type=range style='-webkit-appearance: slider-vertical' id='houseLights' min=0 max=255 value=0 step=1 oninput="setDMX(3, this.value);">
+
 	</body>
 </html>

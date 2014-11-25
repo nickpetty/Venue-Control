@@ -4,6 +4,12 @@ function changeColor (fix, value) {
 	xmlhttp.send();
 };
 
+function setDMX(channel, value) {
+	var xmlhttp = new XMLHttpRequest();
+	xmlhttp.open("GET", '/setDMX/' + channel + '/' + value, true);
+	xmlhttp.send();
+};
+
 $("#fix0").spectrum({
 	//flat: true,
 	showButtons: false,
