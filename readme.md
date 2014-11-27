@@ -5,3 +5,4 @@ Requires:
 + [kinet](https://github.com/vishnubob/kinet)
 + [blu-london-python](https://github.com/nickpetty/bss-london-python)
 + [spectrum.js](http://bgrins.github.io/spectrum/)
++ [pySerial](http://pyserial.sourceforge.net/)
